@@ -1,0 +1,41 @@
+# Default values for app-name.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+enviroment: production
+
+server:
+  name:  app-name
+  image: username/image-name:latest
+  tag:  server
+  port: 8080
+  replicas: 1
+
+db:
+  name:  db-name
+  image: postgres:11.0
+  port:  5432
+  tag:   db
+  replicas: 1
+
+dbService:
+  type: NodePort
+  port: 5432
+
+serverService:
+  type: NodePort
+  port: 9999
+
+serviceAccount:
+  create: false
+
+ingress:
+  enabled: true
+
+volume:
+  name: db-service-volume
+  storage: 5Gi
+  mode: Filesystem
+
+claim:
+  name: db-service-claim

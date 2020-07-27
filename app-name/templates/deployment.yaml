@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.server.name }}-{{ .Values.enviroment }}
+spec: 
+  replicas: {{ .Values.server.replicas }}
+  selector: 
+    matchLabels: 
+      app: {{ .Values.server.name }}
+  template: 
+    metadata:
+      labels:
+        app: {{ .Values.server.name }}
+        enviroment: {{ .Values.enviroment }}
+    spec:
+      containers: 
+        - name: {{ .Values.server.name }}
+          image: {{ .Values.server.image }}
+          imagePullPolicy: Never
+          ports: 
+            - containerPort: {{ .Values.server.port }}
+          env:
+            - name: PORT
+              value: {{ .Values.server.port | quote }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.db.name }}-{{ .Values.enviroment }}
+spec: 
+  replicas: {{ .Values.db.replicas }}
+  selector: 
+    matchLabels: 
+      app: {{ .Values.server.name }}
+  template: 
+    metadata:
+      labels:
+        app: {{ .Values.server.name }}
+        enviroment: {{ .Values.enviroment }}
+    spec:
+      containers: 
+        - name: {{ .Values.db.name }}
+          image: {{ .Values.db.image }}
+          imagePullPolicy: IfNotPresent
+          ports: 
+            - containerPort: {{ .Values.db.port }}
+          env:
+            - name: POSTGRES_DB
+              value: app-name
+            - name: POSTGRES_USER
+              value: root
+            - name: POSTGRES_PASSWORD
+              value: root
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-service-claim
+      volumes: 
+      - name: db-service-claim
+        persistentVolumeClaim:
+            claimName: {{ .Values.claim.name }}
+

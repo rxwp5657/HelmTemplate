@@ -1,0 +1,30 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: db-service-volume
+  labels:
+    type: local
+    app:  app-name
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: db-service-claim
+  labels:
+    app: app-name
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
